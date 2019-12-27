@@ -22,12 +22,22 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import PageFood from './pages/PageFood';
+import PageWater from './pages/PageWater';
+import PageTemperature from './pages/PageTemperature';
+import PageHumidity from './pages/PageHumidity';
+import PageGrowing from './pages/PageGrowing';
 
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet>
         <Route path="/home" component={Home} exact={true} />
+        <Route path="/food" component={PageFood} exact={true}/>
+        <Route path="/water" component={PageWater} exact={true}/>
+        <Route path="/temperature" component={PageTemperature} exact={true}/>
+        <Route path="/humidity" component={PageHumidity} exact={true}/>
+        <Route path="/growing" component={PageGrowing} exact={true}/>
         <Route exact path="/" render={() => <Redirect to="/home" />} />
       </IonRouterOutlet>
     </IonReactRouter>
