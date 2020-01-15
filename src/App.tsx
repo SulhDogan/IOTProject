@@ -3,6 +3,7 @@ import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
+import * as firebase from "firebase";
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -27,6 +28,7 @@ import PageWater from './pages/PageWater';
 import PageTemperature from './pages/PageTemperature';
 import PageHumidity from './pages/PageHumidity';
 import PageGrowing from './pages/PageGrowing';
+import { Globals } from './connection';
 
 const App: React.FC = () => (
   <IonApp>

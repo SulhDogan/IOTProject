@@ -1,5 +1,7 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonCheckbox, IonLabel, IonNote, IonItem, IonBadge, IonButton, IonRow, IonCol, IonIcon, IonRouterLink } from '@ionic/react';
 import React from 'react';
+import { Globals } from '../connection';
+import * as firebase from "firebase";
 
 const Home: React.FC = () => {
   return (
@@ -12,11 +14,11 @@ const Home: React.FC = () => {
       <IonContent>
         <IonList>
           <IonItem href="/food">
-              <IonLabel color="warning">
-                <h1 >YEM</h1>
-                <IonNote>Yem stoğu,kullanımı ve yemlikteki durumu</IonNote>
-              </IonLabel>
-              <IonBadge color="success" slot="start">DURUM</IonBadge>
+            <IonLabel color="warning">
+              <h1 >YEM</h1>
+              <IonNote>Yem stoğu,kullanımı ve yemlikteki durumu</IonNote>
+            </IonLabel>
+            <IonBadge color="success" slot="start">DURUM</IonBadge>
           </IonItem>
           <IonItem href="/water">
             <IonLabel color="secondary shade">
