@@ -43,5 +43,8 @@
       "last 1 safari version"
     ]
   },
-  "description": "An Ionic project"
+  "description": "An Ionic project",
+  "devDependencies": {
+    "@types/chart.js": "^2.9.9"
+  }
 }

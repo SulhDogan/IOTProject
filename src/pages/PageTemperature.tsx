@@ -2,6 +2,7 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonCheck
 import React from 'react';
 import { Globals } from '../connection';
 import * as icons from "ionicons/icons";
+import Chart from 'chart.js';
 
 const PageTemperature: React.FC = () => {
   const [temperateState, setTemperateState] = React.useState({ temperate: 0, day: 1, creation: 1 });
@@ -11,6 +12,12 @@ const PageTemperature: React.FC = () => {
   const [fn, setfn] = React.useState({ init: false });
 
   var fs = Globals.firestore;
+  let today = 30;/*new Date().getDate();*/
+  let days: string[] = [];
+  let grapw: number[] = [];
+  for (let i = today; i > today - 30; i--) {
+    days.push(i.toString());
+  }
   const temperateStatusLambda = async () => {
     let col = fs.collection("SensorData");
     let day = -1;
@@ -82,7 +89,30 @@ const PageTemperature: React.FC = () => {
       monthState.lasttemperate = lastt;
       monthState.avgtemperate = totalt / totaldata;
       monthState.growth = lastt - mfirstt;
+      grapw.push(totalt / totaldata);
     }
+
+    new Chart((document.getElementById("bar-chart") as any).getContext("2d"), {
+      type: 'line',
+      data: {
+        labels: days,
+        datasets: [
+          {
+            label: "Derece",
+            backgroundColor: ["#19B9CAAA"],
+            data: grapw
+          }
+        ]
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Haftalık Ortalama Sıcaklık Oranı (% (Yüzde))'
+        }
+      }
+    });
+
         setmonthState({
           firsttemperate: monthState.firsttemperate,
           lasttemperate: monthState.lasttemperate,
@@ -134,7 +164,7 @@ const PageTemperature: React.FC = () => {
             <IonLabel color="success">AYLIK SICAKLIK ORTALAMASI : {monthState.avgtemperate} C</IonLabel>
           </IonItem>
           <IonItem>
-            /** GRAFİK BURAYA GELECEK */
+          <canvas id="bar-chart" width="800" height="450"></canvas>
           </IonItem>
         </IonList>
       </IonContent>

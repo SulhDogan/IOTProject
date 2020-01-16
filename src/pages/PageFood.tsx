@@ -1,7 +1,10 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonCheckbox, IonLabel, IonNote, IonItem, IonBadge, IonButton, IonRow, IonCol, IonIcon, IonRouterLink, IonText, IonInput, IonRefresher, IonRefresherContent } from '@ionic/react';
-import React, { useState } from 'react';
+import React, { useState, Component } from 'react';
 import { Globals } from '../connection';
 import * as icons from "ionicons/icons";
+import Chart from 'chart.js';
+
+
 
 const PageFood: React.FC = () => {
   const [foodState, setFoodState] = React.useState({ food: 0, day: 1, creation: 1 });
@@ -50,6 +53,8 @@ const PageFood: React.FC = () => {
       let mfirstw = 0;
       let wfirstw = 0;
       let lastw = 0;
+      let grapw: number[] = [];
+      let days: string[] = [];
   
       let today = 30;/*new Date().getDate();*/
       for (let i = today; i > today - 30; i--) {
@@ -71,6 +76,7 @@ const PageFood: React.FC = () => {
           }
           if (i == today - 29)
             mfirstw = lastdoc.get("LoadCell2");
+            
       }
       weekState.firstfood = wfirstw;
       weekState.lastfood = lastw;
@@ -85,6 +91,28 @@ const PageFood: React.FC = () => {
       monthState.lastfood = lastw;
       monthState.avgfood = totalw / totaldata;
       monthState.growth = lastw - mfirstw;
+
+      new Chart((document.getElementById("bar-chart") as any).getContext("2d"), {
+        type: 'line',
+        data: {
+          labels: days,
+          datasets: [
+            {
+              label: "%",
+              backgroundColor: ["#19B9CAAA"],
+              data: grapw
+            }
+          ]
+        },
+        options: {
+          legend: { display: false },
+          title: {
+            display: true,
+            text: 'Haftalık Ortalama Sıcaklık Oranı (% (Yüzde))'
+          }
+        }
+      });
+
       setmonthState({
         firstfood: monthState.firstfood,
         lastfood: monthState.lastfood,
@@ -138,7 +166,7 @@ const PageFood: React.FC = () => {
             </IonLabel>
           </IonItem>
           <IonItem>
-            /** GRAFİK BURAYA GELECEK */
+            <canvas id="bar-chart" width="800" height="450"></canvas>
           </IonItem>
         </IonList>
       </IonContent>
