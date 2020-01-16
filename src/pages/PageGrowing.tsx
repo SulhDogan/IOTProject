@@ -2,6 +2,7 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonCheck
 import React, { useEffect, Component } from 'react';
 import { Globals } from '../connection';
 import * as icons from "ionicons/icons";
+import Chart from 'chart.js';
 
 const PageGrowing: React.FC = () => {
   const [chickenState, setChickenState] = React.useState({ weight: 0, onnest: false, day: 1, creation: 1 });
@@ -92,9 +93,12 @@ const PageGrowing: React.FC = () => {
     let mfirstw = 0;
     let wfirstw = 0;
     let lastw = 0;
-
+    
     let today = 30;/*new Date().getDate();*/
+    let grapw: number[] = [];
+    let days: string[] = [];
     for (let i = today; i > today - 30; i--) {
+      days.push(i.toString());
       totaldata++;
       const snap = await col.where("Day", "==", i).orderBy('Creation', "asc").get();
       if (snap.docs.length == 0)
@@ -102,8 +106,11 @@ const PageGrowing: React.FC = () => {
       let lastdoc = snap.docs[snap.docs.length - 1];
       if (lastdoc.get("OnNest")) {
         totalw += lastdoc.get("Weight");
+        
         if (i == today)
+        {
           lastw = lastdoc.get("Weight");
+        }
         if (i == today - 6)
         {
           console.log(weekState.avgweight);
@@ -113,11 +120,14 @@ const PageGrowing: React.FC = () => {
           wfirstw = lastdoc.get("Weight");
         }
         if (i == today - 29)
+        {
           mfirstw = lastdoc.get("Weight");
+        }
       }
       else {
         lastdoc = snap.docs[snap.docs.length - 2];
         totalw += lastdoc.get("Weight");
+        
         if (i == today)
           lastw = lastdoc.get("Weight");
         if (i == today - 6)
@@ -131,6 +141,7 @@ const PageGrowing: React.FC = () => {
         if (i == today - 29)
           mfirstw = lastdoc.get("Weight");
       }
+      grapw.push(lastdoc.get("Weight"));
     }
     weekState.firstweight = wfirstw;
     weekState.lastweight = lastw;
@@ -145,6 +156,28 @@ const PageGrowing: React.FC = () => {
     monthState.lastweight = lastw;
     monthState.avgweight = totalw / totaldata;
     monthState.growth = lastw - mfirstw;
+
+    new Chart((document.getElementById("bar-chart") as any).getContext("2d"), {
+      type: 'line',
+      data: {
+        labels: days,
+        datasets: [
+          {
+            label: "Gram",
+            backgroundColor: ["#19B9CAAA"],
+            data: grapw
+          }
+        ]
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Tavuğun Aylık Gelişimi (Gram)'
+        }
+      }
+    });
+
     setmonthState({
       firstweight: monthState.firstweight,
       lastweight: monthState.lastweight,
@@ -196,7 +229,7 @@ const PageGrowing: React.FC = () => {
             </IonLabel>
           </IonItem>
           <IonItem>
-            /** GRAFİK BURAYA GELECEK */
+            <canvas id="bar-chart" width="800" height="450"></canvas>
           </IonItem>
         </IonList>
       </IonContent>

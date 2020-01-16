@@ -2,6 +2,7 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonCheck
 import React from 'react';
 import { Globals } from '../connection';
 import * as icons from "ionicons/icons";
+import Chart from 'chart.js';
 
 const PageWater: React.FC = () => {
   const [waterState, setWaterState] = React.useState({ water: 0, day: 1, creation: 1 });
@@ -11,6 +12,12 @@ const PageWater: React.FC = () => {
   const [fn, setfn] = React.useState({ init: false });
 
   var fs = Globals.firestore;
+  let today = 30;/*new Date().getDate();*/
+  let days: string[] = [];
+  let grapw: number[] = [];
+  for (let i = today; i > today - 30; i--) {
+    days.push(i.toString());
+  }
   const waterStatusLambda = async () => {
     let col = fs.collection("SensorData");
     let day = -1;
@@ -71,6 +78,7 @@ const PageWater: React.FC = () => {
           }
           if (i == today - 29)
             mfirstw = lastdoc.get("Water");
+          grapw.push(lastdoc.get("Water"));
       }
       weekState.firstwater = wfirstw;
       weekState.lastwater = lastw;
@@ -81,6 +89,29 @@ const PageWater: React.FC = () => {
         avgwater: weekState.avgwater,
         growth: weekState.lastwater - weekState.firstwater
       });
+
+      new Chart((document.getElementById("bar-chart") as any).getContext("2d"), {
+        type: 'line',
+        data: {
+          labels: days,
+          datasets: [
+            {
+              label: "mm",
+              backgroundColor: ["#19B9CAAA"],
+              data: grapw
+            }
+          ]
+        },
+        options: {
+          legend: { display: false },
+          title: {
+            display: true,
+            text: 'Ortalama Su Yüksekliği (mm (milimetre))'
+          }
+        }
+      });
+  
+
       monthState.firstwater = mfirstw;
       monthState.lastwater = lastw;
       monthState.avgwater = totalw / totaldata;
@@ -137,7 +168,7 @@ const PageWater: React.FC = () => {
             </IonLabel>
           </IonItem>
           <IonItem>
-            /** GRAFİK BURAYA GELECEK */
+          <canvas id="bar-chart" width="800" height="450"></canvas>
           </IonItem>
         </IonList>
       </IonContent>

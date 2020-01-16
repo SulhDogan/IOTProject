@@ -2,6 +2,7 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonCheck
 import React from 'react';
 import { Globals } from '../connection';
 import * as icons from "ionicons/icons";
+import Chart from 'chart.js';
 
 const PageHumidity: React.FC = () => {
   const [humidityState, setHumidityState] = React.useState({ humidity: 0, day: 1, creation: 1 });
@@ -11,6 +12,8 @@ const PageHumidity: React.FC = () => {
   const [fn, setfn] = React.useState({ init: false });
 
   var fs = Globals.firestore;
+  let grapw: number[] = [];
+  let days: string[] = [];
   const humidityStatusLambda = async () => {
     let col = fs.collection("SensorData");
     let day = -1;
@@ -52,6 +55,7 @@ const PageHumidity: React.FC = () => {
     let today = 30;/*new Date().getDate();*/
     for (let i = today; i > today - 30; i--) {
       totaldata++;
+      days.push(i.toString());
       const snap = await col.where("Day", "==", i).orderBy('Creation', "asc").get();
       if (snap.docs.length == 0)
         break;
@@ -61,8 +65,11 @@ const PageHumidity: React.FC = () => {
         let lastdoc = snap.docs[y];
         daytotalt += lastdoc.get("Humidity");
         daytotaldata++;
+        
       }
+      
       dayState.avghumidity = daytotalt / daytotaldata;
+      grapw.push(daytotalt / daytotaldata);
       totalt += dayState.avghumidity;
       if (i == today)
         lastt = dayState.avghumidity;
@@ -75,6 +82,7 @@ const PageHumidity: React.FC = () => {
       }
       if (i == today - 29)
         mfirstt = dayState.avghumidity;
+      
       weekState.firsthumidity = wfirstt;
       weekState.lasthumidity = lastt;
       weekState.growth = lastt - wfirstt;
@@ -83,6 +91,28 @@ const PageHumidity: React.FC = () => {
       monthState.avghumidity = totalt / totaldata;
       monthState.growth = lastt - mfirstt;
     }
+
+    new Chart((document.getElementById("bar-chart") as any).getContext("2d"), {
+      type: 'line',
+      data: {
+        labels: days,
+        datasets: [
+          {
+            label: "%",
+            backgroundColor: ["#19B9CAAA"],
+            data: grapw
+          }
+        ]
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Günlük Ortalama Nem Oranı (% (Yüzde))'
+        }
+      }
+    });
+
     setmonthState({
       firsthumidity: monthState.firsthumidity,
       lasthumidity: monthState.lasthumidity,
@@ -134,7 +164,7 @@ const PageHumidity: React.FC = () => {
             <IonLabel color="success">AYLIK SICAKLIK ORTALAMASI : % {monthState.avghumidity}</IonLabel>
           </IonItem>
           <IonItem>
-            /** GRAFİK BURAYA GELECEK */
+          <canvas id="bar-chart" width="800" height="450"></canvas>
           </IonItem>
         </IonList>
       </IonContent>
