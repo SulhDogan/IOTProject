@@ -1,9 +1,32 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonCheckbox, IonLabel, IonNote, IonItem, IonBadge, IonButton, IonRow, IonCol, IonIcon, IonRouterLink } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonCheckbox, IonLabel, IonNote, IonItem, IonBadge, IonButton, IonRow, IonCol, IonIcon, IonRouterLink, IonToggle } from '@ionic/react';
 import React from 'react';
 import { Globals } from '../connection';
 import * as firebase from "firebase";
 
 const Home: React.FC = () => {
+  const [doorState, setdoorState] = React.useState({ door: false });
+  const [fn, setfn] = React.useState({ init: false });
+  var fs = Globals.firestore;
+  const doorStatusLambda = async () => 
+  {
+    fs.collection("NestData").get()
+    .then((a) => 
+    {
+      if (a.docs.length == 0)
+      return;
+      doorState.door = a.docs[0].get("DoorState");
+      setdoorState({
+        door: doorState.door,
+      });
+    })
+    
+  }
+
+  if (!fn.init) {
+    fn.init = true;
+    doorStatusLambda();
+  }
+  
   return (
     <IonPage>
       <IonHeader>
@@ -47,6 +70,16 @@ const Home: React.FC = () => {
               <IonNote>Tavuğun büyüme istatistiği</IonNote>
             </IonLabel>
             <IonBadge color="success" slot="start">- 2 KG -</IonBadge>
+          </IonItem>
+          <IonItem>
+            <IonToggle checked={doorState.door} onIonChange={
+              (e) => {
+                fs.collection("NestData").doc("0").set({
+                  "DoorState": e.detail.checked
+                });
+              }
+            } />
+            <IonLabel>Kapı Durumu </IonLabel>
           </IonItem>
         </IonList>
       </IonContent>
