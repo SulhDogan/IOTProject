@@ -137,14 +137,6 @@ const PageTemperature: React.FC = () => {
             /** GRAFİK BURAYA GELECEK */
           </IonItem>
         </IonList>
-        <IonRow>
-          <IonCol>
-            <IonButton expand="block" color="success">Test</IonButton>
-          </IonCol>
-          <IonCol>
-            <IonButton expand="block" color="danger"><IonIcon name="trash"></IonIcon></IonButton>
-          </IonCol>
-        </IonRow>
       </IonContent>
     </IonPage>
   );

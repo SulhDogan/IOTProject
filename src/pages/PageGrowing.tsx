@@ -199,14 +199,6 @@ const PageGrowing: React.FC = () => {
             /** GRAFİK BURAYA GELECEK */
           </IonItem>
         </IonList>
-        <IonRow>
-          <IonCol>
-            <IonButton expand="block" color="success">Test</IonButton>
-          </IonCol>
-          <IonCol>
-            <IonButton expand="block" color="danger">ÇIKIŞ</IonButton>
-          </IonCol>
-        </IonRow>
       </IonContent>
     </IonPage>
   );

@@ -49,14 +49,6 @@ const Home: React.FC = () => {
             <IonBadge color="success" slot="start">- 2 KG -</IonBadge>
           </IonItem>
         </IonList>
-        <IonRow>
-          <IonCol>
-            <IonButton expand="block" color="success">Test</IonButton>
-          </IonCol>
-          <IonCol>
-            <IonButton expand="block" color="danger">ÇIKIŞ</IonButton>
-          </IonCol>
-        </IonRow>
       </IonContent>
     </IonPage>
   );
