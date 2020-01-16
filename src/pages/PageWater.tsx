@@ -64,21 +64,28 @@ const PageWater: React.FC = () => {
         const snap = await col.where("Day", "==", i).orderBy('Creation', "asc").get();
         if (snap.docs.length == 0)
           break;
-        let lastdoc = snap.docs[snap.docs.length - 1];
-          totalw += lastdoc.get("Water");
+        let daytotaldata=0;
+        let daytotalt=0;
+        for (let y = 0; y < snap.docs.length; y++) {
+          let lastdoc = snap.docs[y];
+          daytotalt += lastdoc.get("Water");
+          daytotaldata++;
+        }
+        dayState.avgwater=daytotalt/daytotaldata;
+        totalw+=dayState.avgwater;
           if (i == today)
-            lastw = lastdoc.get("Water");
+            lastw = dayState.avgwater;
           if (i == today - 6)
           {
             console.log(weekState.avgwater);
             console.log(totalw);
             console.log(totaldata);
             weekState.avgwater = totalw / totaldata;
-            wfirstw = lastdoc.get("Water");
+            wfirstw = dayState.avgwater;
           }
           if (i == today - 29)
-            mfirstw = lastdoc.get("Water");
-          grapw.push(lastdoc.get("Water"));
+            mfirstw = dayState.avgwater;
+          grapw.push(totalw / totaldata);
       }
       weekState.firstwater = wfirstw;
       weekState.lastwater = lastw;
